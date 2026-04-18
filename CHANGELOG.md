@@ -11,4 +11,4 @@ All notable changes to this repo are documented here. Format follows [Keep a Cha
 - Git pre-flight runbook (fetch → log unpushed → rev-parse for `commit_hash`).
 - Diagnose-bad-deploy workflow using `get_deployment_logs` + `get_job_status`.
 - Approval-flow explanation covering the `⏳ Approval required` response and `get_approval_status` polling.
-- Per-agent install paths documented in README: `.agents/skills/` (vendor-neutral), `.claude/skills/`, `.codex/skills/`, `.gemini/skills/`, `.cursor/skills/`.
+- Per-agent install paths documented in README: `.claude/skills/` (Claude Code + Desktop), `.codex/skills/`, `.gemini/skills/`, `.cursor/skills/`.

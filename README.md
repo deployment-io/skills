@@ -1,6 +1,6 @@
 # deployment.io Skills
 
-SKILL.md distributions for deployment.io coding-agent integrations. Install once, use from any SKILL.md-compliant agent.
+SKILL.md distributions for deployment.io coding-agent integrations. Install once per agent, use across all projects.
 
 ## Available skills
 
@@ -16,20 +16,10 @@ The skill is a directory you drop into your agent's skills folder. Clone once, t
 git clone --depth 1 --branch v0.1.0 https://github.com/deployment-io/skills.git /tmp/dio-skills
 ```
 
-### Vendor-neutral (recommended)
-
-Honored by agents that follow the agentskills.io spec:
+Then copy to the path your agent uses:
 
 ```bash
-mkdir -p ~/.agents/skills && cp -r /tmp/dio-skills/skills/deployment-io ~/.agents/skills/
-```
-
-### Per-agent paths
-
-If your agent doesn't scan `.agents/skills/`:
-
-```bash
-# Claude Code
+# Claude Code / Claude Desktop
 mkdir -p ~/.claude/skills && cp -r /tmp/dio-skills/skills/deployment-io ~/.claude/skills/
 
 # Codex CLI
@@ -42,17 +32,19 @@ mkdir -p ~/.gemini/skills && cp -r /tmp/dio-skills/skills/deployment-io ~/.gemin
 mkdir -p ~/.cursor/skills && cp -r /tmp/dio-skills/skills/deployment-io ~/.cursor/skills/
 ```
 
+Restart your agent after copying so it picks up the new skill.
+
 ## Required: connect the deployment.io MCP server
 
 This skill calls tools served by the deployment.io MCP server. The skill itself does not authenticate — you must connect the MCP server separately in your agent. See https://deployment.io/docs/coding-agents/mcp-configuration/ for one-click OAuth flows.
 
 ## Update
 
-Re-clone with the new tag and re-copy:
+Re-clone with the new tag and re-copy to your agent's skills directory:
 
 ```bash
 git clone --depth 1 --branch <new-tag> https://github.com/deployment-io/skills.git /tmp/dio-skills
-cp -r /tmp/dio-skills/skills/deployment-io ~/.agents/skills/
+cp -r /tmp/dio-skills/skills/deployment-io ~/.claude/skills/  # or your agent's path
 ```
 
 ## Versioning
