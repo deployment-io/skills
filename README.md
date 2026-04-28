@@ -2,6 +2,8 @@
 
 SKILL.md distributions for deployment.io coding-agent integrations. Install once per agent, use across all projects.
 
+https://github.com/user-attachments/assets/a5169280-8237-4dcb-8f7d-5c86c10ccfbc
+
 ## Available skills
 
 | Skill | Description |
