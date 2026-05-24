@@ -1,6 +1,6 @@
 ---
 name: deployment-io
-description: Deploy web services and static sites to deployment.io, read deployment logs, manage environments, AND create AI coding-agent Tasks that open PRs in your repos via the deployment.io MCP server. Use when the user says "deploy this", "ship to staging/production", "push to deployment.io", "check deployment logs", "redeploy", "have an agent fix X", "open a PR for Y", "create a task to migrate Z", or asks about deployment.io environments, runners, or Tasks.
+description: Deploy web services and static sites to deployment.io, read deployment logs, manage environments, and create AI coding-agent Tasks that open PRs in your repos via the deployment.io MCP server. Use when the user says "deploy this", "ship to staging/production", "push to deployment.io", "check deployment logs", "redeploy", "have an agent fix X", "open a PR for Y", "create a task to migrate Z", or asks about deployment.io environments, runners, or Tasks.
 license: MIT
 ---
 
@@ -97,7 +97,7 @@ Write tools on protected environments return a message starting `"⏳ Approval r
 
 ## Creating Tasks (AI coding-agent PRs)
 
-A **Task** is a unit of engineering work that runs on the user's AWS runner: deployment.io spawns Claude Code inside an agentbox container, the agent edits one or more repos, and the runner opens a PR per repo. Use Tasks when the user wants the agent to make the change for them rather than deploy code they've already written.
+A **Task** is a unit of engineering work you hand to an AI coding agent: it makes code changes across one or more repositories and opens a pull request per repository for review. Use Tasks when the user wants the agent to make the change for them, rather than deploying code they've already written.
 
 ### Prerequisites (the tool will error clearly if missing)
 
