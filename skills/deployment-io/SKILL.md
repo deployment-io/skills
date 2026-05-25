@@ -1,6 +1,6 @@
 ---
 name: deployment-io
-description: Deploy web services and static sites to deployment.io, read deployment logs, and manage environments via the deployment.io MCP server. Use when the user says "deploy this", "ship to staging/production", "push to deployment.io", "check deployment logs", "redeploy", or asks about deployment.io environments and runners.
+description: Deploy web services and static sites to deployment.io, read deployment logs, manage environments, and create AI coding-agent tasks that open PRs in your repos via the deployment.io MCP server. Use when the user says "deploy this", "ship to staging/production", "push to deployment.io", "check deployment logs", "redeploy", "have an agent fix X", "open a PR for Y", "create a task to migrate Z", or asks about deployment.io environments, runners, or tasks.
 license: MIT
 ---
 
@@ -94,6 +94,39 @@ Write tools on protected environments return a message starting `"⏳ Approval r
 2. `get_deployment_logs` with a 5-minute window around the failure → returns a `job_id`.
 3. Poll `get_job_status` until `is_done`; read `output`.
 4. For **build** (not runtime) failures, the original `deploy_*` job's `get_job_status` already contains build logs; dashboard URL in the message body.
+
+## Creating Tasks (AI coding-agent PRs)
+
+A **task** is a unit of engineering work you hand to an AI coding agent: it makes code changes across one or more repositories and opens a pull request per repository for review. Use tasks when the user wants the agent to make the change for them, rather than deploying code they've already written.
+
+### Cost awareness
+
+Tasks burn the user's Anthropic/Bedrock budget — typical runs use 50k–500k tokens, larger refactors more. Do not call `create_task` speculatively. Confirm with the user before calling, especially when wrapping the call inside a longer agent workflow ("I'll have deployment.io fix this for you, is that OK?").
+
+### Parameter detection: `create_task`
+
+- **title**: short noun phrase (≤ 200 chars), e.g. "Migrate users service to TypeScript".
+- **description**: the actual prompt the agent will receive. Be specific — list constraints, files, acceptance criteria. Quality of description drives quality of output. Do not paste raw chat transcripts.
+- **repositories**: one entry per repo the agent should touch. For each:
+  - `repository_url`: `git remote get-url origin` (or the URL the user names).
+  - `branch`: the base branch to work from. Detect the default with `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`, or use the branch the user names.
+- **model** (optional): omit unless the user specifies. Server falls back to the org's configured default (typically `"sonnet"`). Explicit values: `"haiku"` (cheaper, simpler tasks), `"sonnet"` (balanced), `"opus"` (harder refactors).
+- **max_turns** (optional): omit unless the user has a reason. Server default is 30, which fits most tasks. Raise to 50–80 explicitly for large refactors; lower to 10–15 for tightly-scoped edits.
+- **token_budget** (optional): don't set this unless the user explicitly asks for a cost ceiling (0 = uncapped).
+
+### Polling
+
+`create_task` returns an `accepted` envelope with `task_id`, `poll_tool: "get_task_status"`, `poll_args`, `poll_interval: "15s"`. Poll until `is_done: true`. Tasks take minutes to hours; don't poll faster than 15s.
+
+### Reading status
+
+`get_task_status` returns the task's rolled-up state, per-repo PR URLs (populated once the PRs are opened), and the last 10 log lines from the most recent agent run. Full agent transcripts live at the `url` field — share that with the user for deep inspection.
+
+Terminal states:
+- `Succeeded` — PRs opened (check `repositories[].pr_url`). Surface each PR link to the user for review.
+- `NoChanges` — agent ran but produced no diffs. Usually means the description was satisfied by existing code, or the agent couldn't find a path. Read `latest_run_logs` and surface to the user.
+- `Failed` — read `latest_run_logs` and the dashboard `url` to diagnose. Common causes: the agent ran out of turns, or build/test checks failed during the run.
+- `Cancelled` — user (or admin) stopped the task.
 
 ## References
 
