@@ -15,7 +15,7 @@ https://github.com/user-attachments/assets/a5169280-8237-4dcb-8f7d-5c86c10ccfbc
 The skill is a directory you drop into your agent's skills folder. Clone once, then copy into the directory your agent reads:
 
 ```bash
-git clone --depth 1 --branch v0.1.0 https://github.com/deployment-io/skills.git /tmp/dio-skills
+git clone --depth 1 --branch v0.2.0 https://github.com/deployment-io/skills.git /tmp/dio-skills
 ```
 
 Then copy to the path your agent uses:
