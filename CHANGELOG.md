@@ -2,6 +2,12 @@
 
 All notable changes to this repo are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- "Writing the task description" section in `SKILL.md`: the checks a description should pass before `create_task`.
+
 ## [0.2.0] — 2026-05-19
 
 ### Added
