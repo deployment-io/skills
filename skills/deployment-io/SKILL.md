@@ -106,13 +106,28 @@ Tasks burn the user's Anthropic/Bedrock budget — typical runs use 50k–500k t
 ### Parameter detection: `create_task`
 
 - **title**: short noun phrase (≤ 200 chars), e.g. "Migrate users service to TypeScript".
-- **description**: the actual prompt the agent will receive. Be specific — list constraints, files, acceptance criteria. Quality of description drives quality of output. Do not paste raw chat transcripts.
+- **description**: the actual prompt the agent will receive. Be specific — list constraints, files, acceptance criteria. Quality of description drives quality of output. Do not paste raw chat transcripts. See *Writing the task description* below.
 - **repositories**: one entry per repo the agent should touch. For each:
   - `repository_url`: `git remote get-url origin` (or the URL the user names).
   - `branch`: the base branch to work from. Detect the default with `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`, or use the branch the user names.
 - **model** (optional): omit unless the user specifies. Server falls back to the org's configured default (typically `"sonnet"`). Explicit values: `"haiku"` (cheaper, simpler tasks), `"sonnet"` (balanced), `"opus"` (harder refactors).
 - **max_turns** (optional): omit unless the user has a reason. Server default is 30, which fits most tasks. Raise to 50–80 explicitly for large refactors; lower to 10–15 for tightly-scoped edits.
 - **token_budget** (optional): don't set this unless the user explicitly asks for a cost ceiling (0 = uncapped).
+
+### Writing the task description
+
+The agent that runs the task sees only the title and description — not this conversation and not the files you read — so the description must stand alone. Before calling `create_task`, check it:
+
+- **Values are written out.** Every list, enum, limit, threshold, message text and name the agent needs is in the description itself — never "the parameters we discussed" or "the usual checks".
+- **Names exist.** Search the repository for every file, function, field, command, environment variable and config key you name, and keep it only if you found it — or say it is new. Use the build and test commands the repository's own CI runs.
+- **User-facing text is true in every state.** For each message, label or status you prescribe, list the ways a user can reach it, and word it so it is true on all of them.
+- **Each acceptance criterion says how it is checked** — a command, a test, an observable behavior — or that only a person can check it after deploy.
+- **Scope is explicit.** State what is out of scope, keep one outcome per task, and for several repositories say which must merge or deploy first.
+- **Edge cases are decided.** Every edge case you noticed is either handled or written down as an accepted limitation — never left unsaid.
+- **New configuration is named.** When the change needs an environment variable, secret or setting that does not exist yet, name it and each environment it must be set in. The agent cannot set values; a person will.
+- **No commit, push or PR instructions.** Never tell the agent to commit, push or open a pull request — deployment.io opens the PR itself.
+
+If a check cannot be met without a decision from the user, ask the user before calling `create_task`.
 
 ### Polling
 
